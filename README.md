@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🌾 AcehPangan — Dashboard Prediksi Harga Komoditas
 
 > Sistem prediksi harga komoditas pangan Provinsi Aceh berbasis model **LSTM** dan **LSTM-GRU**
@@ -89,3 +90,7 @@ File `data/data.json` berisi:
 ---
 
 *Dashboard ini dibuat sebagai bagian dari skripsi penelitian prediksi harga komoditas dan peluang usaha distribusi pangan di Aceh menggunakan model deep learning.*
+=======
+# Food-Commodity-Price-Prediction-in-Aceh-Province
+A comparative study of LSTM and LSTM-GRU models for predicting the prices of Medium Rice, Shallots, and Curly Red Chili using daily data from 2021–2024.
+>>>>>>> c34d375d00ca98c3fe44a61e36d4fcf860db6060
