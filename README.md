@@ -93,4 +93,4 @@ File `data/data.json` berisi:
 =======
 # Food-Commodity-Price-Prediction-in-Aceh-Province
 A comparative study of LSTM and LSTM-GRU models for predicting the prices of Medium Rice, Shallots, and Curly Red Chili using daily data from 2021–2024.
->>>>>>> c34d375d00ca98c3fe44a61e36d4fcf860db6060
+>>>>>>> 
