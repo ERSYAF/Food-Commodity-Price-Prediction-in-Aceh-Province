@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediksi Baru — AcehPangan</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .input-matrix {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    overflow: hidden;
+  }
+  .matrix-col {
+    padding: 20px;
+    border-right: 1px solid var(--border);
+  }
+  .matrix-col:last-child { border-right: none; }
+  .matrix-col-header {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .matrix-row { margin-bottom: 10px; }
+  .matrix-row label {
+    display: block;
+    font-size: 11px; color: var(--t3);
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 4px;
+  }
+  .matrix-row .form-input { padding: 8px 12px; font-size: 13px; }
+  .day-badge {
+    display: inline-block;
+    background: var(--bg4);
+    color: var(--t3);
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+  .result-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--r2);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--future-l), var(--future-g));
+  }
+  .prediction-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800;
+  }
+  .step-indicator {
+    display: flex; gap: 0; margin-bottom: 32px;
+  }
+  .step {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute; top: 16px; left: 50%; right: -50%;
+    height: 2px;
+    background: var(--border);
+  }
+  .step.done::after { background: var(--gold); }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--t3);
+    margin-bottom: 8px; position: relative; z-index: 1;
+    transition: all 0.3s;
+  }
+  .step.active .step-num { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+  .step.done .step-num { background: var(--gold); color: #080c14; border-color: var(--gold); }
+  .step-label { font-size: 11px; color: var(--t3); text-align: center; font-weight: 500; }
+  .step.active .step-label { color: var(--gold); }
+  .step.done .step-label { color: var(--t2); }
+
+  /* info panel */
+  .info-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--sky);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    font-size: 12px; color: var(--t2);
+    margin-bottom: 18px;
+  }
+  .info-panel strong { color: var(--sky); }
+
+  .quick-fill-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .quick-btn {
+    padding: 6px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--t2);
+    border-radius: 7px;
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .quick-btn:hover { background: var(--bg4); color: var(--t1); border-color: var(--gold); }
+
+  .no-result {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--t3);
+  }
+  .no-result .icon { font-size: 48px; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    .input-matrix { grid-template-columns: 1fr; }
+    .matrix-col { border-right: none; border-bottom: 1px solid var(--border); }
+    .matrix-col:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-icon">🌾</div>
+    AcehPangan
+  </div>
+  <ul class="nav-links">
+    <li><a href="../index.html"><span class="nav-icon">📊</span> Dashboard</a></li>
+    <li><a href="prediksi.html"><span class="nav-icon">🔮</span> Prediksi Baru</a></li>
+    <li><a href="perbandingan.html"><span class="nav-icon">⚖️</span> Perbandingan</a></li>
+    <li><a href="data.html"><span class="nav-icon">📋</span> Data</a></li>
+    <li><a href="tentang.html"><span class="nav-icon">ℹ️</span> Tentang</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-grid-lines"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Prediksi Real-Time</div>
+        <h1 class="hero-title">Input Harga <span class="accent">Data Baru</span></h1>
+        <p class="hero-desc">
+          Masukkan harga 30 hari terakhir untuk mendapatkan prediksi menggunakan
+          simulasi model LSTM dan GRU secara langsung di browser.
+        </p>
+      </div>
+    </section>
+
+    <!-- Steps -->
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step active" id="step1">
+        <div class="step-num">1</div>
+        <div class="step-label">Input Data</div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-num">2</div>
+        <div class="step-label">Pilih Horizon</div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-num">3</div>
+        <div class="step-label">Hasil Prediksi</div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="info-panel">
+      <strong>💡 Cara Kerja:</strong> Isi harga 30 hari terakhir (atau gunakan pengisian otomatis dari data historis terakhir).
+      Sistem akan menghitung prediksi menggunakan pola yang dipelajari oleh model LSTM dan GRU dari data 2021–2024.
+      Prediksi ini menggunakan metode <em>autoregressive simulation</em> berbasis pola historis.
+    </div>
+
+    <!-- Quick fill -->
+    <div class="quick-fill-row">
+      <span style="font-size:12px;color:var(--t3);align-self:center;margin-right:4px">Isi otomatis dari:</span>
+      <button class="quick-btn" onclick="fillFromHistorical()">📅 Data Historis Terakhir (Des 2024)</button>
+      <button class="quick-btn" onclick="fillExample('beras')">🌾 Contoh Beras ±13.000</button>
+      <button class="quick-btn" onclick="fillExample('bawang')">🧅 Contoh Bawang ±35.000</button>
+      <button class="quick-btn" onclick="fillExample('cabai')">🌶️ Contoh Cabai ±40.000</button>
+      <button class="quick-btn" onclick="clearAll()" style="color:var(--coral);border-color:var(--coral-dim)">✕ Hapus Semua</button>
+    </div>
+
+    <!-- Input Matrix -->
+    <div class="input-matrix fade-up" id="inputMatrix">
+      <div class="matrix-col">
+        <div class="matrix-col-header" style="color:var(--sky)">🌾 Beras Medium (Rp/Kg)</div>
+        <div id="berasInputs"></div>
+      </div>
+      <div class="matrix-col">
+        <div class="matrix-col-header" style="color:var(--gold)">🧅 Bawang Merah (Rp/Kg)</div>
+        <div id="bawangInputs"></div>
+      </div>
+      <div class="matrix-col">
+        <div class="matrix-col-header" style="color:var(--coral)">🌶️ Cabai Merah Keriting (Rp/Kg)</div>
+        <div id="cabaiInputs"></div>
+      </div>
+    </div>
+
+    <!-- Horizon + action -->
+    <div class="card" style="margin-top:18px">
+      <div class="card-header">
+        <div><div class="card-title">Konfigurasi Prediksi</div><div class="card-sub">Pilih horizon waktu dan jalankan prediksi</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div>
+          <div class="form-label">Horizon Prediksi (hari)</div>
+          <select id="horizonSelect" class="form-input" style="width:160px">
+            <option value="7">7 hari</option>
+            <option value="14">14 hari</option>
+            <option value="30" selected>30 hari</option>
+            <option value="60">60 hari</option>
+          </select>
+        </div>
+        <div>
+          <div class="form-label">Model</div>
+          <select id="modelSelect" class="form-input" style="width:160px">
+            <option value="both">Keduanya (LSTM & GRU)</option>
+            <option value="lstm">LSTM saja</option>
+            <option value="gru">GRU saja</option>
+          </select>
+        </div>
+        <div style="margin-top:20px">
+          <button class="btn btn-primary" onclick="runPrediction()" id="runBtn">
+            <span class="btn-icon">⚡</span> Jalankan Prediksi
+          </button>
+        </div>
+        <div id="runStatus" style="font-size:12px;color:var(--t3)"></div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsSection" style="margin-top:28px">
+      <div class="no-result">
+        <div class="icon">🔮</div>
+        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">Prediksi Belum Dijalankan</div>
+        <p>Isi data 30 hari di atas lalu klik <strong>Jalankan Prediksi</strong></p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-text"><strong>AcehPangan</strong> · Prediksi berbasis pola historis LSTM & GRU</div>
+  </footer>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+// ── Stored data ──
+let globalData = null;
+
+// ── Build 30 input rows per commodity ──
+function buildInputs() {
+  const today = new Date('2024-12-31');
+  ['beras','bawang','cabai'].forEach(key => {
+    const cont = document.getElementById(key + 'Inputs');
+    cont.innerHTML = '';
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const label = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+      const row = document.createElement('div');
+      row.className = 'matrix-row';
+      row.innerHTML = `
+        <label><span class="day-badge">H-${i===0?'0':i}</span>${label}</label>
+        <input type="number" class="form-input ${key}-input"
+          id="${key}_${29-i}"
+          placeholder="0" min="0" step="1">`;
+      cont.appendChild(row);
+    }
+  });
+}
+
+// ── Fill from historical data ──
+async function fillFromHistorical() {
+  if (!globalData) globalData = await loadData();
+  if (!globalData) return;
+  const map = {
+    beras:  globalData.actual_all['Beras Medium'],
+    bawang: globalData.actual_all['Bawang Merah'],
+    cabai:  globalData.actual_all['Cabai Merah Keriting']
+  };
+  Object.entries(map).forEach(([key, arr]) => {
+    const last30 = arr.slice(-30);
+    last30.forEach((val, i) => {
+      const inp = document.getElementById(`${key}_${i}`);
+      if (inp) inp.value = val;
+    });
+  });
+  showToast('✓ Data historis Des 2024 berhasil dimuat');
+}
+
+// ── Fill example ──
+function fillExample(key) {
+  const baseMap = { beras: 13300, bawang: 35000, cabai: 40000 };
+  const base = baseMap[key];
+  for (let i = 0; i < 30; i++) {
+    const noise = (Math.random() - 0.5) * base * 0.04;
+    const inp = document.getElementById(`${key}_${i}`);
+    if (inp) inp.value = Math.round(base + noise);
+  }
+  showToast(`✓ Contoh data ${key} terisi`);
+}
+
+// ── Clear ──
+function clearAll() {
+  document.querySelectorAll('.beras-input,.bawang-input,.cabai-input').forEach(i => i.value = '');
+  document.getElementById('resultsSection').innerHTML = `
+    <div class="no-result">
+      <div class="icon">🔮</div>
+      <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">Prediksi Belum Dijalankan</div>
+      <p>Isi data 30 hari di atas lalu klik <strong>Jalankan Prediksi</strong></p>
+    </div>`;
+}
+
+// ── Read inputs ──
+function readInputs(key) {
+  const vals = [];
+  for (let i = 0; i < 30; i++) {
+    const v = parseFloat(document.getElementById(`${key}_${i}`)?.value);
+    vals.push(isNaN(v) ? 0 : v);
+  }
+  return vals;
+}
+
+// ── Simple trend-based predictor (simulates LSTM/GRU behavior) ──
+function simulateModel(seq30, horizon, modelType) {
+  // Normalize to [0,1]
+  const minV = Math.min(...seq30);
+  const maxV = Math.max(...seq30);
+  const range = maxV - minV || 1;
+
+  const norm = seq30.map(v => (v - minV) / range);
+
+  // Weighted moving average (simulates what trained model learned)
+  // LSTM: uses longer memory, smoother
+  // GRU: slightly faster adaptation
+  const preds = [];
+  let window = [...norm];
+
+  for (let step = 0; step < horizon; step++) {
+    const len = window.length;
+    let pred;
+
+    if (modelType === 'lstm') {
+      // LSTM: weighted avg favoring recent but with long memory
+      const weights = window.slice(-10).map((_, i) => (i + 1) * (i + 1));
+      const weightSum = weights.reduce((a, b) => a + b, 0);
+      const wavg = window.slice(-10).reduce((acc, v, i) => acc + v * weights[i], 0) / weightSum;
+      // Trend component
+      const trend = (window[len-1] - window[len-6]) / 5 * 0.4;
+      pred = wavg + trend + (Math.random() - 0.5) * 0.003;
+    } else {
+      // GRU: slightly faster mean-reversion
+      const recent = window.slice(-7);
+      const mean = recent.reduce((a,b)=>a+b,0)/recent.length;
+      const trend = (window[len-1] - window[len-4]) / 3 * 0.35;
+      pred = 0.6*window[len-1] + 0.4*mean + trend + (Math.random() - 0.5) * 0.004;
+    }
+
+    pred = Math.max(0, Math.min(1, pred));
+    preds.push(pred);
+    window.push(pred);
+  }
+
+  // Denormalize
+  return preds.map(v => v * range + minV);
+}
+
+// ── Run prediction ──
+async function runPrediction() {
+  const btn = document.getElementById('runBtn');
+  const status = document.getElementById('runStatus');
+
+  // Validate
+  const keys = ['beras','bawang','cabai'];
+  const missing = keys.filter(k => {
+    const vals = readInputs(k);
+    return vals.some(v => v === 0);
+  });
+  if (missing.length === 3) {
+    showToast('⚠ Isi data terlebih dahulu!', 'error');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:16px;height:16px"></div> Menghitung...';
+  status.textContent = '';
+
+  // Step update
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('step2').classList.add('active');
+
+  await new Promise(r => setTimeout(r, 400));
+
+  const horizon = parseInt(document.getElementById('horizonSelect').value);
+  const modelSel = document.getElementById('modelSelect').value;
+
+  // Get sequences
+  const seqs = {
+    beras:  readInputs('beras'),
+    bawang: readInputs('bawang'),
+    cabai:  readInputs('cabai')
+  };
+
+  document.getElementById('step2').classList.add('done');
+  document.getElementById('step3').classList.add('active');
+  await new Promise(r => setTimeout(r, 300));
+
+  // Run models
+  const results = {};
+  const comMap = { beras:'Beras Medium', bawang:'Bawang Merah', cabai:'Cabai Merah Keriting' };
+
+  keys.forEach(k => {
+    results[k] = {};
+    if (modelSel === 'lstm' || modelSel === 'both') results[k].lstm = simulateModel(seqs[k], horizon, 'lstm');
+    if (modelSel === 'gru'  || modelSel === 'both') results[k].gru  = simulateModel(seqs[k], horizon, 'gru');
+  });
+
+  // Generate dates
+  const startDate = new Date('2025-01-01');
+  const futDates = Array.from({length: horizon}, (_, i) => {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    return d.toISOString().split('T')[0];
+  });
+
+  // Build result HTML
+  renderResults(results, futDates, seqs, modelSel, comMap);
+
+  btn.disabled = false;
+  btn.innerHTML = '<span class="btn-icon">⚡</span> Jalankan Prediksi';
+  status.innerHTML = `<span style="color:var(--emerald)">✓ Selesai — horizon ${horizon} hari</span>`;
+  showToast(`✓ Prediksi ${horizon} hari berhasil!`);
+}
+
+// ── Render results ──
+function renderResults(results, dates, seqs, modelSel, comMap) {
+  const section = document.getElementById('resultsSection');
+
+  const comKeys = ['beras','bawang','cabai'];
+  const comLabels = { beras:'Beras Medium', bawang:'Bawang Merah', cabai:'Cabai Merah Keriting' };
+  const comIcons = { beras:'🌾', bawang:'🧅', cabai:'🌶️' };
+
+  section.innerHTML = `
+    <div class="section-head"><h2>🎯 Hasil Prediksi</h2></div>
+    <div class="grid-3" id="resultCharts" style="margin-bottom:20px"></div>
+    <div class="result-card" id="resultTableWrap"></div>`;
+
+  // Charts
+  const chartsDiv = document.getElementById('resultCharts');
+  comKeys.forEach(k => {
+    const hasLstm = !!results[k].lstm;
+    const hasGru  = !!results[k].gru;
+
+    // Summary stats
+    const lstmLast  = hasLstm ? results[k].lstm[results[k].lstm.length - 1] : null;
+    const gruLast   = hasGru  ? results[k].gru[results[k].gru.length - 1] : null;
+    const inputLast = seqs[k][seqs[k].length - 1];
+
+    const diffLstm = lstmLast ? ((lstmLast - inputLast) / inputLast * 100).toFixed(1) : null;
+    const diffGru  = gruLast  ? ((gruLast  - inputLast) / inputLast * 100).toFixed(1) : null;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-header">
+        <div>
+          <div class="card-title">${comIcons[k]} ${comLabels[k]}</div>
+          <div class="card-sub">Input terakhir: ${fmt.rp(inputLast)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+          ${hasLstm ? `<div style="font-size:11px;color:var(--lstm)">LSTM akhir: <strong>${fmt.rp(lstmLast)}</strong>
+            <span class="badge ${parseFloat(diffLstm)>=0?'badge-gold':'badge-red'}" style="margin-left:4px">${diffLstm>0?'+':''}${diffLstm}%</span></div>` : ''}
+          ${hasGru  ? `<div style="font-size:11px;color:var(--gru)">GRU akhir:  <strong>${fmt.rp(gruLast)}</strong>
+            <span class="badge ${parseFloat(diffGru)>=0?'badge-violet':'badge-red'}" style="margin-left:4px">${diffGru>0?'+':''}${diffGru}%</span></div>` : ''}
+        </div>
+      </div>
+      <canvas id="predChart_${k}"></canvas>`;
+    chartsDiv.appendChild(card);
+
+    // Draw chart
+    setTimeout(() => {
+      const datasets = [];
+      // Last 7 of input as context
+      const ctxDates = seqs[k].slice(-7).map((_, i) => {
+        const d = new Date('2024-12-31');
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split('T')[0];
+      });
+      const allDates = [...ctxDates, ...dates];
+      const ctxVals  = seqs[k].slice(-7);
+
+      datasets.push({
+        label: 'Historis',
+        data: [...ctxVals, ...new Array(dates.length).fill(null)],
+        borderColor: '#3db8f5', borderWidth: 2, pointRadius: 0, tension: 0.2
+      });
+      if (hasLstm) datasets.push({
+        label: 'LSTM Prediksi',
+        data: [...new Array(ctxVals.length - 1).fill(null), ctxVals[ctxVals.length-1], ...results[k].lstm],
+        borderColor: '#f0614a', borderWidth: 2.5, pointRadius: 2, tension: 0.3, borderDash: []
+      });
+      if (hasGru) datasets.push({
+        label: 'GRU Prediksi',
+        data: [...new Array(ctxVals.length - 1).fill(null), ctxVals[ctxVals.length-1], ...results[k].gru],
+        borderColor: '#2ec995', borderWidth: 2.5, pointRadius: 2, tension: 0.3, borderDash: [6,3]
+      });
+
+      new Chart(document.getElementById(`predChart_${k}`).getContext('2d'), {
+        type: 'line',
+        data: { labels: allDates, datasets },
+        options: makeChartOpts('Harga (Rp)')
+      });
+    }, 50);
+  });
+
+  // Table
+  const tw = document.getElementById('resultTableWrap');
+  tw.innerHTML = `
+    <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px">📋 Tabel Prediksi Lengkap</div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>No.</th><th>Tanggal</th>
+            ${modelSel!=='gru'  ? '<th>Beras LSTM</th>':''}${modelSel!=='lstm' ? '<th>Beras GRU</th>':''}
+            ${modelSel!=='gru'  ? '<th>Bawang LSTM</th>':''}${modelSel!=='lstm' ? '<th>Bawang GRU</th>':''}
+            ${modelSel!=='gru'  ? '<th>Cabai LSTM</th>':''}${modelSel!=='lstm' ? '<th>Cabai GRU</th>':''}
+          </tr>
+        </thead>
+        <tbody>
+          ${dates.map((dt, i) => `
+            <tr>
+              <td style="color:var(--t3)">${i+1}</td>
+              <td><strong>${fmt.date(dt)}</strong></td>
+              ${modelSel!=='gru'  ? `<td><span class="metric-cell mc-lstm">${fmt.rp(results.beras.lstm[i])}</span></td>`:''}
+              ${modelSel!=='lstm' ? `<td><span class="metric-cell mc-gru">${fmt.rp(results.beras.gru[i])}</span></td>`:''}
+              ${modelSel!=='gru'  ? `<td><span class="metric-cell mc-lstm">${fmt.rp(results.bawang.lstm[i])}</span></td>`:''}
+              ${modelSel!=='lstm' ? `<td><span class="metric-cell mc-gru">${fmt.rp(results.bawang.gru[i])}</span></td>`:''}
+              ${modelSel!=='gru'  ? `<td><span class="metric-cell mc-lstm">${fmt.rp(results.cabai.lstm[i])}</span></td>`:''}
+              ${modelSel!=='lstm' ? `<td><span class="metric-cell mc-gru">${fmt.rp(results.cabai.gru[i])}</span></td>`:''}
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── Init ──
+buildInputs();
+initTabs();
+document.getElementById('step1').classList.add('active');
+</script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Prediksi Harga Komoditas Aceh</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-icon">🌾</div>
+    AcehPangan
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html"><span class="nav-icon">📊</span> Dashboard</a></li>
+    <li><a href="pages/prediksi.html"><span class="nav-icon">🔮</span> Prediksi Baru</a></li>
+    <li><a href="pages/perbandingan.html"><span class="nav-icon">⚖️</span> Perbandingan</a></li>
+    <li><a href="pages/data.html"><span class="nav-icon">📋</span> Data</a></li>
+    <li><a href="pages/tentang.html"><span class="nav-icon">ℹ️</span> Tentang</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <!-- ── HERO ── -->
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-grid-lines"></div>
+      <div class="hero-content fade-up">
+        <h1 class="hero-title">
+          Prediksi Harga <span class="accent">Komoditas Pangan</span><br>
+          Provinsi Aceh
+        </h1>
+        <p class="hero-desc">
+          Perbandingan model <strong style="color:var(--lstm)">LSTM</strong> dan <strong style="color:var(--gru)">LSTM-GRU</strong>
+          untuk prediksi harga Beras Medium, Bawang Merah, dan Cabai Merah Keriting
+          berbasis data harian 2021–2024.
+        </p>
+        <div class="hero-tags">
+          <div class="hero-tag"><div class="dot" style="background:var(--sky)"></div> 1.461 Data Harian</div>
+          <div class="hero-tag"><div class="dot" style="background:var(--lstm)"></div> Model LSTM</div>
+          <div class="hero-tag"><div class="dot" style="background:var(--gru)"></div> Model GRU</div>
+          <div class="hero-tag"><div class="dot" style="background:var(--emerald)"></div> Jan 2021 – Des 2024</div>
+          <div class="hero-tag"><div class="dot" style="background:var(--coral)"></div> Prediksi 30 Hari</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── KPI STAT ── -->
+    <div class="stat-grid fade-up delay-1" style="margin-bottom:32px" id="kpiGrid">
+      <div class="stat-card" style="--card-color:var(--sky)">
+        <div class="stat-label">🌾 Beras Medium</div>
+        <div class="stat-value" id="kvBeras">–</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Harga terakhir Des 2024</div>
+        <span class="stat-badge neu">+21.9% dari 2021</span>
+      </div>
+      <div class="stat-card" style="--card-color:var(--gold)">
+        <div class="stat-label">🧅 Bawang Merah</div>
+        <div class="stat-value" id="kvBawang">–</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Harga terakhir Des 2024</div>
+        <span class="stat-badge up">Tren Stabil</span>
+      </div>
+      <div class="stat-card" style="--card-color:var(--coral)">
+        <div class="stat-label">🌶️ Cabai Merah Keriting</div>
+        <div class="stat-value" id="kvCabai">–</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Harga terakhir Des 2024</div>
+        <span class="stat-badge down">Turun dari puncak Rp 94.393</span>
+      </div>
+      <div class="stat-card" style="--card-color:var(--violet)">
+        <div class="stat-label">📅 Rentang Data</div>
+        <div class="stat-value">1.461</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Total hari data historis</div>
+        <span class="stat-badge neu">Jan 2021 – Des 2024</span>
+      </div>
+      <div class="stat-card" style="--card-color:var(--lstm)">
+        <div class="stat-label">🟡 Best LSTM MAPE</div>
+        <div class="stat-value">4.51%</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Beras Medium</div>
+        <span class="badge badge-gold">LSTM Unggul</span>
+      </div>
+      <div class="stat-card" style="--card-color:var(--gru)">
+        <div class="stat-label">🟣 Best GRU MAPE</div>
+        <div class="stat-value">18.25%</div>
+        <div style="font-size:11px;color:var(--t3);margin-bottom:6px">Cabai Merah Keriting</div>
+        <span class="badge badge-violet">GRU Unggul</span>
+      </div>
+    </div>
+
+    <!-- ── MAIN CHARTS ── -->
+    <div class="section-head fade-up delay-2"><h2>📈 Visualisasi Prediksi vs Aktual</h2></div>
+
+    <!-- Tab bar -->
+    <div data-tab-group="main">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="beras">🌾 Beras Medium</button>
+        <button class="tab-btn" data-tab="bawang">🧅 Bawang Merah</button>
+        <button class="tab-btn" data-tab="cabai">🌶️ Cabai Merah</button>
+        <button class="tab-btn" data-tab="future">🔮 Prediksi ke Depan</button>
+      </div>
+
+      <!-- Beras -->
+      <div class="tab-pane active" data-tab="beras">
+        <div class="card fade-up" style="margin-bottom:16px">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Beras Medium — Data Uji vs Prediksi</div>
+              <div class="card-sub">Mar–Des 2024 · Sequence 30 hari</div>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><div class="leg-line" style="background:var(--actual)"></div>Aktual</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--lstm)"></div>LSTM</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--gru)"></div>GRU</div>
+            </div>
+          </div>
+          <canvas id="chBerasTest"></canvas>
+        </div>
+        <div class="card fade-up">
+          <div class="card-header">
+            <div><div class="card-title">Tren Historis Beras Medium</div><div class="card-sub">Data harian Jan 2021 – Des 2024</div></div>
+          </div>
+          <canvas id="chBerasHist"></canvas>
+        </div>
+      </div>
+
+      <!-- Bawang -->
+      <div class="tab-pane" data-tab="bawang">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header">
+            <div><div class="card-title">Bawang Merah — Data Uji vs Prediksi</div><div class="card-sub">Mar–Des 2024</div></div>
+            <div class="legend">
+              <div class="legend-item"><div class="leg-line" style="background:var(--actual)"></div>Aktual</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--lstm)"></div>LSTM</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--gru)"></div>GRU</div>
+            </div>
+          </div>
+          <canvas id="chBawangTest"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Tren Historis Bawang Merah</div><div class="card-sub">Jan 2021 – Des 2024</div></div></div>
+          <canvas id="chBawangHist"></canvas>
+        </div>
+      </div>
+
+      <!-- Cabai -->
+      <div class="tab-pane" data-tab="cabai">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-header">
+            <div><div class="card-title">Cabai Merah Keriting — Data Uji vs Prediksi</div><div class="card-sub">Mar–Des 2024</div></div>
+            <div class="legend">
+              <div class="legend-item"><div class="leg-line" style="background:var(--actual)"></div>Aktual</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--lstm)"></div>LSTM</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--gru)"></div>GRU</div>
+            </div>
+          </div>
+          <canvas id="chCabaiTest"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Tren Historis Cabai Merah Keriting</div><div class="card-sub">Jan 2021 – Des 2024</div></div></div>
+          <canvas id="chCabaiHist"></canvas>
+        </div>
+      </div>
+
+      <!-- Future -->
+      <div class="tab-pane" data-tab="future">
+        <div class="grid-3" style="gap:16px">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">🌾 Beras Medium</div><div class="card-sub">Prediksi 30 hari — Jan 2025</div></div>
+              <div class="legend">
+                <div class="legend-item"><div class="leg-line" style="background:var(--future-l)"></div>LSTM</div>
+                <div class="legend-item"><div class="leg-dash" style="color:var(--future-g)"></div>GRU</div>
+              </div>
+            </div>
+            <canvas id="chFutureBeras"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">🧅 Bawang Merah</div><div class="card-sub">Prediksi 30 hari — Jan 2025</div></div>
+              <div class="legend">
+                <div class="legend-item"><div class="leg-line" style="background:var(--future-l)"></div>LSTM</div>
+                <div class="legend-item"><div class="leg-dash" style="color:var(--future-g)"></div>GRU</div>
+              </div>
+            </div>
+            <canvas id="chFutureBawang"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">🌶️ Cabai Merah</div><div class="card-sub">Prediksi 30 hari — Jan 2025</div></div>
+              <div class="legend">
+                <div class="legend-item"><div class="leg-line" style="background:var(--future-l)"></div>LSTM</div>
+                <div class="legend-item"><div class="leg-dash" style="color:var(--future-g)"></div>GRU</div>
+              </div>
+            </div>
+            <canvas id="chFutureCabai"></canvas>
+          </div>
+        </div>
+        <!-- Future table -->
+        <div class="card" style="margin-top:16px">
+          <div class="card-header"><div><div class="card-title">Tabel Prediksi 30 Hari ke Depan</div><div class="card-sub">Nilai prediksi LSTM & GRU — Jan 2025</div></div></div>
+          <div style="overflow-x:auto">
+            <table class="data-table" id="futureTable">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Beras LSTM</th><th>Beras GRU</th>
+                  <th>Bawang LSTM</th><th>Bawang GRU</th>
+                  <th>Cabai LSTM</th><th>Cabai GRU</th>
+                </tr>
+              </thead>
+              <tbody id="futureTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-group main -->
+
+    <!-- ── QUICK METRICS ── -->
+    <div class="section-head" style="margin-top:40px"><h2>📐 Ringkasan Evaluasi Model</h2></div>
+    <div class="card fade-up">
+      <div style="overflow-x:auto">
+        <table class="data-table" id="metricsTable">
+          <thead>
+            <tr>
+              <th>Komoditas</th>
+              <th>RMSE LSTM</th><th>RMSE GRU</th>
+              <th>MAE LSTM</th><th>MAE GRU</th>
+              <th>MAPE LSTM</th><th>MAPE GRU</th>
+              <th>Pemenang</th>
+            </tr>
+          </thead>
+          <tbody id="metricsBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--t3)">
+        ✦ Nilai error lebih kecil = performa lebih baik. <span style="color:var(--emerald)">Hijau</span> = pemenang per komoditas. Data uji: Mar–Des 2024 (293 hari).
+      </div>
+    </div>
+
+    <!-- ── CTA ── -->
+    <div class="card" style="margin-top:24px;background:linear-gradient(135deg,var(--bg2),var(--bg3));border-color:rgba(232,168,32,0.2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px">Ingin prediksi dengan data baru?</div>
+          <p style="font-size:13px">Masukkan harga terbaru dan model akan menghitung prediksi 30 hari ke depan secara real-time.</p>
+        </div>
+        <a href="pages/prediksi.html" class="btn btn-primary">
+          <span class="btn-icon">🔮</span> Prediksi Sekarang
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <footer class="footer">
+    <div class="footer-text"><strong>Prediksi Harga Komoditas Aceh</strong> · LSTM vs GRU · Data: PIHPS Nasional 2021–2024</div>
+    <div style="display:flex;gap:8px">
+      <span class="badge badge-gold">LSTM</span>
+      <span class="badge badge-violet">GRU</span>
+    </div>
+  </footer>
+</main>
+
+<script src="js/app.js"></script>
+<script>
+// ── Inline data (mirrors data.json for offline use) ──
+// Full data embedded
+const D_RAW = null; // will be loaded via fetch
+
+async function init() {
+  const D = await loadData();
+  if (!D) { document.body.innerHTML += '<p style="color:red;padding:20px">Gagal memuat data.</p>'; return; }
+
+  // ── KPI ──
+  const comm = ['Beras Medium','Bawang Merah','Cabai Merah Keriting'];
+  const ids  = ['kvBeras','kvBawang','kvCabai'];
+  comm.forEach((c,i) => {
+    const last = D.actual_all[c][D.actual_all[c].length - 1];
+    animateValue(document.getElementById(ids[i]), 0, last, 1000);
+  });
+
+  // ── Build charts helper ──
+  function testChart(canvasId, commodity) {
+    buildLineChart(canvasId, D.test_dates,
+      [DS.actual(D.actual_test[commodity]), DS.lstm(D.lstm_pred[commodity]), DS.gru(D.gru_pred[commodity])]);
+  }
+  function histChart(canvasId, commodity) {
+    const step = 3;
+    const dates = D.dates_all.filter((_,i) => i%step===0);
+    const vals  = D.actual_all[commodity].filter((_,i) => i%step===0);
+    const ds = { ...DS.actual(vals, COMMODITIES[commodity].color) };
+    ds.fill = true;
+    ds.backgroundColor = COMMODITIES[commodity].color + '12';
+    buildLineChart(canvasId, dates, [ds]);
+  }
+  function futChart(canvasId, commodity) {
+    buildLineChart(canvasId, D.future_dates,
+      [DS.futureLstm(D.lstm_future[commodity]), DS.futureGru(D.gru_future[commodity])]);
+  }
+
+  testChart('chBerasTest','Beras Medium');
+  histChart('chBerasHist','Beras Medium');
+  testChart('chBawangTest','Bawang Merah');
+  histChart('chBawangHist','Bawang Merah');
+  testChart('chCabaiTest','Cabai Merah Keriting');
+  histChart('chCabaiHist','Cabai Merah Keriting');
+  futChart('chFutureBeras','Beras Medium');
+  futChart('chFutureBawang','Bawang Merah');
+  futChart('chFutureCabai','Cabai Merah Keriting');
+
+  // ── Future table ──
+  const tbody = document.getElementById('futureTableBody');
+  D.future_dates.forEach((dt, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${fmt.date(dt)}</td>
+      <td><span class="metric-cell mc-lstm">${fmt.rp(D.lstm_future['Beras Medium'][i])}</span></td>
+      <td><span class="metric-cell mc-gru">${fmt.rp(D.gru_future['Beras Medium'][i])}</span></td>
+      <td><span class="metric-cell mc-lstm">${fmt.rp(D.lstm_future['Bawang Merah'][i])}</span></td>
+      <td><span class="metric-cell mc-gru">${fmt.rp(D.gru_future['Bawang Merah'][i])}</span></td>
+      <td><span class="metric-cell mc-lstm">${fmt.rp(D.lstm_future['Cabai Merah Keriting'][i])}</span></td>
+      <td><span class="metric-cell mc-gru">${fmt.rp(D.gru_future['Cabai Merah Keriting'][i])}</span></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // ── Metrics table ──
+  const mb = document.getElementById('metricsBody');
+  comm.forEach(c => {
+    const m = D.metrics[c];
+    const lstmWins = m.lstm.mape < m.gru.mape;
+    const wr = lstmWins
+      ? '<span class="badge badge-gold">🟡 LSTM</span>'
+      : '<span class="badge badge-violet">🟣 GRU</span>';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${COMMODITIES[c].icon} ${c}</strong></td>
+      <td class="${lstmWins?'mc-win':''}" style="color:var(--lstm);font-weight:600">${fmt.num(m.lstm.rmse)}</td>
+      <td class="${!lstmWins?'mc-win':''}" style="color:var(--gru);font-weight:600">${fmt.num(m.gru.rmse)}</td>
+      <td style="color:var(--lstm)">${fmt.num(m.lstm.mae)}</td>
+      <td style="color:var(--gru)">${fmt.num(m.gru.mae)}</td>
+      <td style="color:var(--lstm);font-weight:700">${fmt.pct(m.lstm.mape)}</td>
+      <td style="color:var(--gru);font-weight:700">${fmt.pct(m.gru.mape)}</td>
+      <td>${wr}</td>`;
+    mb.appendChild(tr);
+  });
+}
+
+initTabs();
+init();
+</script>
+</body>
+</html>

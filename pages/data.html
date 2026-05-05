@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data — AcehPangan</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .filter-bar {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 16px 20px;
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;
+    margin-bottom: 20px;
+  }
+  .filter-item { flex: 1; min-width: 140px; }
+  .filter-item .form-label { margin-bottom: 6px; }
+  .stat-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;
+  }
+  .stat-pill {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px; color: var(--t2);
+  }
+  .stat-pill strong { color: var(--t1); }
+  .table-wrap { overflow-x: auto; max-height: 500px; overflow-y: auto; }
+  .data-table td, .data-table th { white-space: nowrap; }
+  .data-table th { position: sticky; top: 0; background: var(--bg2); z-index: 2; }
+  .download-bar {
+    display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap;
+  }
+  .comm-toggle {
+    display: flex; gap: 6px;
+  }
+  .comm-tog-btn {
+    padding: 5px 14px;
+    border-radius: 6px; border: 1px solid var(--border2);
+    background: transparent; color: var(--t3);
+    font-family: 'Instrument Sans',sans-serif; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .comm-tog-btn.on { color: var(--bg); font-weight: 700; }
+  .ct-beras.on  { background: var(--sky);  border-color: var(--sky);  }
+  .ct-bawang.on { background: var(--gold); border-color: var(--gold); }
+  .ct-cabai.on  { background: var(--coral);border-color: var(--coral);}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-icon">🌾</div>
+    AcehPangan
+  </div>
+  <ul class="nav-links">
+    <li><a href="../index.html"><span class="nav-icon">📊</span> Dashboard</a></li>
+    <li><a href="prediksi.html"><span class="nav-icon">🔮</span> Prediksi Baru</a></li>
+    <li><a href="perbandingan.html"><span class="nav-icon">⚖️</span> Perbandingan</a></li>
+    <li><a href="data.html"><span class="nav-icon">📋</span> Data</a></li>
+    <li><a href="tentang.html"><span class="nav-icon">ℹ️</span> Tentang</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-grid-lines"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Eksplorasi Data</div>
+        <h1 class="hero-title">Data <span class="accent">Historis</span> Komoditas</h1>
+        <p class="hero-desc">Jelajahi data harga harian komoditas pangan Aceh 2021–2024 dengan filter interaktif dan statistik deskriptif.</p>
+      </div>
+    </section>
+
+    <!-- Stats Overview -->
+    <div class="grid-4 fade-up" style="margin-bottom:28px" id="statsOverview">
+      <div class="stat-card" style="--card-color:var(--emerald)">
+        <div class="stat-label">Total Data</div>
+        <div class="stat-value">1.461</div>
+        <div style="font-size:11px;color:var(--t3)">Hari · 3 Komoditas</div>
+      </div>
+      <div class="stat-card" style="--card-color:var(--sky)">
+        <div class="stat-label">🌾 Beras — Rata-rata</div>
+        <div class="stat-value" id="avgBeras">–</div>
+        <div style="font-size:11px;color:var(--t3)">Rp/Kg · 2021–2024</div>
+      </div>
+      <div class="stat-card" style="--card-color:var(--gold)">
+        <div class="stat-label">🧅 Bawang — Rata-rata</div>
+        <div class="stat-value" id="avgBawang">–</div>
+        <div style="font-size:11px;color:var(--t3)">Rp/Kg · 2021–2024</div>
+      </div>
+      <div class="stat-card" style="--card-color:var(--coral)">
+        <div class="stat-label">🌶️ Cabai — Rata-rata</div>
+        <div class="stat-value" id="avgCabai">–</div>
+        <div style="font-size:11px;color:var(--t3)">Rp/Kg · 2021–2024</div>
+      </div>
+    </div>
+
+    <!-- Tren Chart with toggle -->
+    <div class="section-head"><h2>📈 Tren Harga Historis</h2></div>
+    <div class="card fade-up" style="margin-bottom:24px">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Harga Komoditas Harian 2021–2024</div>
+          <div class="card-sub">Klik tombol komoditas untuk tampil/sembunyi</div>
+        </div>
+        <div class="comm-toggle">
+          <button class="comm-tog-btn ct-beras on" onclick="toggleLine('beras',this)">🌾 Beras</button>
+          <button class="comm-tog-btn ct-bawang on" onclick="toggleLine('bawang',this)">🧅 Bawang</button>
+          <button class="comm-tog-btn ct-cabai on" onclick="toggleLine('cabai',this)">🌶️ Cabai</button>
+        </div>
+      </div>
+      <canvas id="chTrend" style="max-height:320px"></canvas>
+    </div>
+
+    <!-- Filter + Table -->
+    <div class="section-head"><h2>🔍 Tabel Data Harian</h2></div>
+    <div class="filter-bar">
+      <div class="filter-item">
+        <div class="form-label">Dari Tanggal</div>
+        <input type="date" id="filterFrom" class="form-input" value="2021-01-01">
+      </div>
+      <div class="filter-item">
+        <div class="form-label">Sampai Tanggal</div>
+        <input type="date" id="filterTo" class="form-input" value="2024-12-31">
+      </div>
+      <div class="filter-item">
+        <div class="form-label">Tampilkan Per</div>
+        <select id="filterStep" class="form-input">
+          <option value="1">Setiap hari</option>
+          <option value="7" selected>Setiap minggu</option>
+          <option value="30">Setiap bulan</option>
+        </select>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="applyFilter()">
+          <span class="btn-icon">🔍</span> Filter
+        </button>
+      </div>
+      <div>
+        <button class="btn btn-ghost" onclick="exportCSV()">
+          <span class="btn-icon">⬇</span> Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card fade-up">
+      <div style="margin-bottom:12px" id="tableInfo"></div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No.</th><th>Tanggal</th>
+              <th>🌾 Beras Medium</th>
+              <th>🧅 Bawang Merah</th>
+              <th>🌶️ Cabai Merah</th>
+              <th>Δ Beras</th><th>Δ Bawang</th><th>Δ Cabai</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Descriptive stats -->
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;color:var(--gold)">
+          Statistik Deskriptif (Data Terfilter)
+        </div>
+        <div class="grid-3" id="descStats"></div>
+      </div>
+    </div>
+
+  </div>
+  <footer class="footer">
+    <div class="footer-text"><strong>AcehPangan</strong> · Data: PIHPS Nasional Provinsi Aceh 2021–2024</div>
+  </footer>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+let globalD = null;
+let trendChart = null;
+
+async function init() {
+  globalD = await loadData();
+  if (!globalD) return;
+
+  const comms = ['Beras Medium','Bawang Merah','Cabai Merah Keriting'];
+  comms.forEach((c, i) => {
+    const ids = ['avgBeras','avgBawang','avgCabai'];
+    const arr = globalD.actual_all[c];
+    const avg = arr.reduce((a,b)=>a+b,0)/arr.length;
+    document.getElementById(ids[i]).textContent = 'Rp ' + Math.round(avg).toLocaleString('id-ID');
+  });
+
+  // Trend chart (sampled every 3)
+  const step = 3;
+  const dates = globalD.dates_all.filter((_,i) => i%step===0);
+  const ctx = document.getElementById('chTrend').getContext('2d');
+  trendChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [
+        { id:'beras',  label:'🌾 Beras Medium', data: globalD.actual_all['Beras Medium'].filter((_,i)=>i%step===0),
+          borderColor:'#3db8f5', borderWidth:1.5, pointRadius:0, tension:0.2, fill:false },
+        { id:'bawang', label:'🧅 Bawang Merah', data: globalD.actual_all['Bawang Merah'].filter((_,i)=>i%step===0),
+          borderColor:'#e8a820', borderWidth:1.5, pointRadius:0, tension:0.2, fill:false },
+        { id:'cabai',  label:'🌶️ Cabai Merah', data: globalD.actual_all['Cabai Merah Keriting'].filter((_,i)=>i%step===0),
+          borderColor:'#f0614a', borderWidth:1.5, pointRadius:0, tension:0.2, fill:false }
+      ]
+    },
+    options: makeChartOpts('Harga (Rp)')
+  });
+
+  applyFilter();
+}
+
+function toggleLine(key, btn) {
+  if (!trendChart) return;
+  const idx = key === 'beras' ? 0 : key === 'bawang' ? 1 : 2;
+  const ds = trendChart.data.datasets[idx];
+  const hidden = trendChart.getDatasetMeta(idx).hidden;
+  trendChart.getDatasetMeta(idx).hidden = !hidden;
+  trendChart.update();
+  btn.classList.toggle('on');
+}
+
+function applyFilter() {
+  if (!globalD) return;
+  const from = document.getElementById('filterFrom').value;
+  const to   = document.getElementById('filterTo').value;
+  const step = parseInt(document.getElementById('filterStep').value);
+
+  const comms = ['Beras Medium','Bawang Merah','Cabai Merah Keriting'];
+  const filtered = globalD.dates_all
+    .map((d, i) => ({ d, i }))
+    .filter(({d}) => d >= from && d <= to)
+    .filter((_, j) => j % step === 0);
+
+  document.getElementById('tableInfo').innerHTML =
+    `<span style="font-size:12px;color:var(--t3)">Menampilkan <strong style="color:var(--t1)">${filtered.length}</strong> baris dari ${globalD.dates_all.filter(d=>d>=from&&d<=to).length} hari</span>`;
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  filtered.forEach(({d, i}, rowIdx) => {
+    const prev = i > 0 ? i-1 : 0;
+    const vals = comms.map(c => globalD.actual_all[c][i]);
+    const prevs= comms.map(c => globalD.actual_all[c][prev]);
+    const deltas = vals.map((v,j) => v - prevs[j]);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--t3)">${rowIdx+1}</td>
+      <td><strong>${fmt.date(d)}</strong></td>
+      ${vals.map(v => `<td>${fmt.rp(v)}</td>`).join('')}
+      ${deltas.map(d => `<td style="color:${d>0?'var(--emerald)':d<0?'var(--coral)':'var(--t3)'}">${d>0?'+':''}${fmt.rp(d)}</td>`).join('')}`;
+    tbody.appendChild(tr);
+  });
+
+  // Descriptive stats
+  const ds = document.getElementById('descStats');
+  ds.innerHTML = '';
+  comms.forEach(c => {
+    const arr = filtered.map(({i}) => globalD.actual_all[c][i]);
+    const sorted = [...arr].sort((a,b)=>a-b);
+    const mean = arr.reduce((a,b)=>a+b,0)/arr.length;
+    const std  = Math.sqrt(arr.reduce((a,b)=>a+(b-mean)**2,0)/arr.length);
+    const el = document.createElement('div');
+    el.className = 'card card-sm';
+    el.innerHTML = `
+      <div style="font-weight:700;margin-bottom:10px;font-family:'Syne',sans-serif">${COMMODITIES[c].icon} ${c}</div>
+      <div class="stat-row">
+        <div class="stat-pill">Min: <strong>${fmt.rp(sorted[0])}</strong></div>
+        <div class="stat-pill">Max: <strong>${fmt.rp(sorted[sorted.length-1])}</strong></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-pill">Rata²: <strong>${fmt.rp(mean)}</strong></div>
+        <div class="stat-pill">Std: <strong>${fmt.rp(std)}</strong></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-pill">Median: <strong>${fmt.rp(sorted[Math.floor(sorted.length/2)])}</strong></div>
+      </div>`;
+    ds.appendChild(el);
+  });
+}
+
+function exportCSV() {
+  if (!globalD) return;
+  const from = document.getElementById('filterFrom').value;
+  const to   = document.getElementById('filterTo').value;
+  const step = parseInt(document.getElementById('filterStep').value);
+  const comms = ['Beras Medium','Bawang Merah','Cabai Merah Keriting'];
+
+  const rows = [['Tanggal','Beras Medium','Bawang Merah','Cabai Merah Keriting']];
+  globalD.dates_all
+    .map((d,i) => ({d,i}))
+    .filter(({d}) => d >= from && d <= to)
+    .filter((_,j) => j%step===0)
+    .forEach(({d,i}) => {
+      rows.push([d, ...comms.map(c => globalD.actual_all[c][i])]);
+    });
+
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `data_komoditas_aceh_${from}_${to}.csv`;
+  a.click();
+  showToast('✓ CSV berhasil diunduh');
+}
+
+init();
+</script>
+</body>
+</html>

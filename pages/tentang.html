@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tentang — AcehPangan</title>
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    margin: 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold), var(--gru), transparent);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--bg2);
+    box-shadow: 0 0 8px var(--gold);
+  }
+  .timeline-date { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; }
+  .timeline-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin: 3px 0; }
+  .timeline-body { font-size: 13px; color: var(--t2); }
+
+  .arch-diagram {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .arch-node {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 12px; font-weight: 600;
+  }
+  .arch-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--t3);
+  }
+  .arch-flow {
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 0;
+  }
+  .tech-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 12px; font-weight: 500;
+  }
+  .ref-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r);
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .ref-card .ref-title { font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+  .ref-card .ref-info  { font-size: 12px; color: var(--t3); }
+  .glossary-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px; align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .glossary-term { font-weight: 700; color: var(--gold); font-family: 'Syne', sans-serif; font-size: 13px; }
+  .profile-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 28px;
+    text-align: center;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--gold), var(--gru));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; margin: 0 auto 14px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-icon">🌾</div>
+    AcehPangan
+  </div>
+  <ul class="nav-links">
+    <li><a href="../index.html"><span class="nav-icon">📊</span> Dashboard</a></li>
+    <li><a href="prediksi.html"><span class="nav-icon">🔮</span> Prediksi Baru</a></li>
+    <li><a href="perbandingan.html"><span class="nav-icon">⚖️</span> Perbandingan</a></li>
+    <li><a href="data.html"><span class="nav-icon">📋</span> Data</a></li>
+    <li><a href="tentang.html"><span class="nav-icon">ℹ️</span> Tentang</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-grid-lines"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Dokumentasi Skripsi</div>
+        <h1 class="hero-title">Tentang <span class="accent">Proyek</span> Ini</h1>
+        <p class="hero-desc">Latar belakang, metodologi, arsitektur model, dan informasi teknis lengkap proyek penelitian prediksi harga komoditas pangan Aceh.</p>
+      </div>
+    </section>
+
+    <!-- Research Info -->
+    <div class="grid-2 fade-up" style="margin-bottom:28px;align-items:start">
+      <div>
+        <div class="section-head"><h2>📖 Latar Belakang</h2></div>
+        <div class="card">
+          <p style="margin-bottom:14px;line-height:1.9">
+            Ketidakstabilan harga komoditas pangan menjadi tantangan besar bagi pelaku usaha distribusi di Provinsi Aceh.
+            Fluktuasi harga yang tidak terprediksi menyebabkan inefisiensi rantai pasokan, kerugian distributor,
+            dan kerawanan pangan bagi masyarakat.
+          </p>
+          <p style="margin-bottom:14px;line-height:1.9">
+            Penelitian ini mengembangkan sistem prediksi harga berbasis <strong style="color:var(--lstm)">Long Short-Term Memory (LSTM)</strong>
+            dan membandingkannya dengan <strong style="color:var(--gru)">Gated Recurrent Unit (GRU)</strong> untuk
+            tiga komoditas utama: Beras Medium, Bawang Merah, dan Cabai Merah Keriting.
+          </p>
+          <p style="line-height:1.9">
+            Hasil prediksi diharapkan dapat membantu distributor pangan dalam mengambil keputusan strategis
+            tentang waktu pembelian, penyimpanan, dan distribusi komoditas.
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="section-head"><h2>📋 Informasi Penelitian</h2></div>
+        <div class="card">
+          <table class="data-table">
+            <tbody>
+              <tr><td style="color:var(--t3);width:140px">Judul</td><td><strong>Prediksi Harga Komoditas &amp; Peluang Usaha Distribusi Pangan di Aceh Menggunakan LSTM</strong></td></tr>
+              <tr><td style="color:var(--t3)">Metode</td><td>LSTM &amp; LSTM-GRU (Deep Learning)</td></tr>
+              <tr><td style="color:var(--t3)">Data</td><td>PIHPS Nasional · Jan 2021 – Des 2024</td></tr>
+              <tr><td style="color:var(--t3)">Komoditas</td><td>Beras Medium, Bawang Merah, Cabai Merah Keriting</td></tr>
+              <tr><td style="color:var(--t3)">Sequence</td><td>30 hari (look-back window)</td></tr>
+              <tr><td style="color:var(--t3)">Split Data</td><td>80% training / 20% testing</td></tr>
+              <tr><td style="color:var(--t3)">Metrik Eval</td><td>RMSE, MAE, MAPE</td></tr>
+              <tr><td style="color:var(--t3)">Lokasi</td><td>Provinsi Aceh, Indonesia</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture -->
+    <div class="section-head"><h2>🏗️ Arsitektur Model</h2></div>
+    <div class="arch-diagram fade-up" style="margin-bottom:24px">
+      <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:20px;color:var(--gold)">Alur Pemrosesan Data → Model → Prediksi</div>
+      <div class="arch-flow">
+        <div class="arch-node" style="border-color:rgba(61,184,245,0.3)">
+          <div style="font-size:18px;margin-bottom:4px">📦</div>
+          <div>Raw Data<br><span style="color:var(--t3);font-weight:400">1.461 hari</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node" style="border-color:rgba(232,168,32,0.3)">
+          <div style="font-size:18px;margin-bottom:4px">⚙️</div>
+          <div>Pre-processing<br><span style="color:var(--t3);font-weight:400">MinMaxScaler</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node" style="border-color:rgba(155,114,240,0.3)">
+          <div style="font-size:18px;margin-bottom:4px">🪟</div>
+          <div>Sequencing<br><span style="color:var(--t3);font-weight:400">Window=30</span></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="arch-node" style="border-color:rgba(232,168,32,0.5);background:var(--gold-dim)">
+            <div>🟡 LSTM</div>
+            <div style="font-size:10px;color:var(--t3)">(30, 3) → (3)</div>
+          </div>
+          <div class="arch-node" style="border-color:rgba(155,114,240,0.5);background:var(--violet-dim)">
+            <div>🟣 GRU</div>
+            <div style="font-size:10px;color:var(--t3)">(30, 3) → (3)</div>
+          </div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node" style="border-color:rgba(46,201,149,0.3)">
+          <div style="font-size:18px;margin-bottom:4px">📈</div>
+          <div>Prediksi<br><span style="color:var(--t3);font-weight:400">3 komoditas</span></div>
+        </div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+        <div class="arch-node" style="font-size:11px;padding:7px 12px">
+          <strong style="color:var(--lstm)">LSTM layers:</strong> forget gate + input gate + output gate
+        </div>
+        <div class="arch-node" style="font-size:11px;padding:7px 12px">
+          <strong style="color:var(--gru)">GRU layers:</strong> reset gate + update gate (lebih efisien)
+        </div>
+        <div class="arch-node" style="font-size:11px;padding:7px 12px">
+          <strong style="color:var(--sky)">Loss function:</strong> MSE · Optimizer: Adam
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="grid-2" style="margin-bottom:28px;align-items:start">
+      <div>
+        <div class="section-head"><h2>🗓️ Alur Penelitian</h2></div>
+        <div class="card">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-date">Tahap 1</div>
+              <div class="timeline-title">Pengumpulan Data</div>
+              <div class="timeline-body">Scraping data harga harian dari PIHPS Nasional untuk 3 komoditas di Aceh. Periode Jan 2021–Des 2024 (1.461 hari).</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">Tahap 2</div>
+              <div class="timeline-title">Preprocessing & EDA</div>
+              <div class="timeline-body">Pembersihan data, normalisasi MinMaxScaler, analisis statistik deskriptif, dan pembentukan window sequence 30 hari.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">Tahap 3</div>
+              <div class="timeline-title">Pembangunan Model LSTM</div>
+              <div class="timeline-body">Arsitektur LSTM multi-layer dengan input (None, 30, 3) dan output (None, 3). Training dengan 80% data.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">Tahap 4</div>
+              <div class="timeline-title">Pembangunan Model GRU</div>
+              <div class="timeline-body">Arsitektur LSTM-GRU hybrid sebagai perbandingan. Input/output shape sama dengan LSTM.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">Tahap 5</div>
+              <div class="timeline-title">Evaluasi & Perbandingan</div>
+              <div class="timeline-body">Pengujian dengan 20% data (293 hari). Evaluasi menggunakan RMSE, MAE, dan MAPE.</div>
+            </div>
+            <div class="timeline-item" style="margin-bottom:0">
+              <div class="timeline-date">Tahap 6</div>
+              <div class="timeline-title">Analisis Peluang Usaha</div>
+              <div class="timeline-body">Interpretasi hasil prediksi untuk identifikasi peluang distribusi pangan berbasis data.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-head"><h2>🔬 Teknologi</h2></div>
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <div class="tech-pill">🐍 Python 3.x</div>
+            <div class="tech-pill">🧠 TensorFlow / Keras</div>
+            <div class="tech-pill">🔢 NumPy</div>
+            <div class="tech-pill">📊 Pandas</div>
+            <div class="tech-pill">📈 Matplotlib</div>
+            <div class="tech-pill">⚡ scikit-learn</div>
+            <div class="tech-pill">🌐 HTML5 / CSS3</div>
+            <div class="tech-pill">📉 Chart.js</div>
+            <div class="tech-pill">☁️ PIHPS Nasional</div>
+          </div>
+        </div>
+
+        <div class="section-head"><h2>📚 Glosarium</h2></div>
+        <div class="card">
+          <div class="glossary-row"><div class="glossary-term">LSTM</div><div>Long Short-Term Memory — jenis RNN dengan mekanisme gerbang (forget, input, output) untuk menangkap dependensi jangka panjang.</div></div>
+          <div class="glossary-row"><div class="glossary-term">GRU</div><div>Gated Recurrent Unit — versi lebih sederhana dari LSTM dengan dua gerbang (reset & update), lebih efisien secara komputasi.</div></div>
+          <div class="glossary-row"><div class="glossary-term">MAPE</div><div>Mean Absolute Percentage Error — rata-rata persentase error absolut. Semakin kecil = semakin akurat.</div></div>
+          <div class="glossary-row"><div class="glossary-term">RMSE</div><div>Root Mean Squared Error — akar rata-rata kuadrat error. Sensitif terhadap outlier.</div></div>
+          <div class="glossary-row"><div class="glossary-term">MAE</div><div>Mean Absolute Error — rata-rata error absolut dalam satuan rupiah. Lebih robust terhadap outlier.</div></div>
+          <div class="glossary-row" style="border:none"><div class="glossary-term">Window</div><div>Sequence panjang 30 hari data historis yang digunakan sebagai input model untuk satu prediksi.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="section-head"><h2>🏆 Hasil Penelitian</h2></div>
+    <div class="card fade-up" style="margin-bottom:24px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px;color:var(--lstm)">🟡 Model LSTM</div>
+          <div style="font-size:13px;color:var(--t2);line-height:1.9">
+            ✦ Unggul pada <strong style="color:var(--t1)">Beras Medium</strong> dengan MAPE 4.51% — akurasi sangat baik<br>
+            ✦ Unggul pada <strong style="color:var(--t1)">Bawang Merah</strong> dengan MAPE 17.58%<br>
+            ✦ Lebih cocok untuk harga yang bergerak lambat dan periodik<br>
+            ✦ Memori jangka panjang membantu menangkap tren musiman<br>
+            ✦ <strong style="color:var(--emerald)">Rekomendasi: model utama untuk Beras & Bawang</strong>
+          </div>
+        </div>
+        <div style="border-left:1px solid var(--border);padding-left:24px">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px;color:var(--gru)">🟣 Model GRU</div>
+          <div style="font-size:13px;color:var(--t2);line-height:1.9">
+            ✦ Unggul pada <strong style="color:var(--t1)">Cabai Merah Keriting</strong> dengan MAPE 18.25%<br>
+            ✦ Lebih adaptif terhadap perubahan harga yang volatil/mendadak<br>
+            ✦ Lebih efisien secara komputasi (parameter lebih sedikit)<br>
+            ✦ Reset gate memungkinkan adaptasi cepat terhadap spike harga<br>
+            ✦ <strong style="color:var(--emerald)">Rekomendasi: model utama untuk Cabai</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <footer class="footer">
+    <div class="footer-text">
+      <strong>AcehPangan Dashboard</strong> · Skripsi Prediksi Harga Komoditas · Provinsi Aceh · 2021–2024
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="status-dot green"></span>
+      <span style="font-size:12px;color:var(--t3)">Sistem aktif</span>
+    </div>
+  </footer>
+</main>
+
+<script src="../js/app.js"></script>
+</body>
+</html>

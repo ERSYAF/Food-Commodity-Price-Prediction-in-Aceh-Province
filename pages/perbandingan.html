@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perbandingan Model — AcehPangan</title>
+<link rel="stylesheet" href="../css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .vs-divider {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 8px; padding: 16px 8px;
+  }
+  .vs-badge {
+    width: 44px; height: 44px;
+    background: var(--bg4);
+    border: 2px solid var(--border2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 800; color: var(--t2);
+  }
+  .model-header {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 22px;
+    position: relative; overflow: hidden;
+  }
+  .model-header::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  }
+  .model-lstm::before { background: var(--lstm); }
+  .model-gru::before  { background: var(--gru);  }
+  .model-icon {
+    font-size: 36px; margin-bottom: 10px; display: block;
+  }
+  .model-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .model-desc { font-size: 13px; color: var(--t2); line-height: 1.7; }
+  .model-spec {
+    margin-top: 14px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .model-spec-item {
+    background: var(--bg3);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .model-spec-item span { color: var(--t3); display: block; font-size: 10px; text-transform: uppercase; }
+
+  .bar-compare {
+    display: flex; gap: 6px; align-items: center; margin: 6px 0;
+  }
+  .bar-label { font-size: 11px; font-weight: 600; width: 40px; text-align: right; }
+  .bar-track { flex: 1; background: var(--bg4); border-radius: 3px; height: 12px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+  .bar-val { font-size: 11px; width: 80px; }
+
+  .winner-row {
+    background: rgba(46,201,149,0.06);
+    border: 1px solid rgba(46,201,149,0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 8px;
+  }
+  .winner-icon { font-size: 22px; }
+  .winner-text { font-size: 13px; }
+  .winner-text strong { color: var(--emerald); }
+
+  .radar-wrap { position: relative; max-width: 340px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-icon">🌾</div>
+    AcehPangan
+  </div>
+  <ul class="nav-links">
+    <li><a href="../index.html"><span class="nav-icon">📊</span> Dashboard</a></li>
+    <li><a href="prediksi.html"><span class="nav-icon">🔮</span> Prediksi Baru</a></li>
+    <li><a href="perbandingan.html"><span class="nav-icon">⚖️</span> Perbandingan</a></li>
+    <li><a href="data.html"><span class="nav-icon">📋</span> Data</a></li>
+    <li><a href="tentang.html"><span class="nav-icon">ℹ️</span> Tentang</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+  <div class="container">
+
+    <section class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-grid-lines"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Analisis Perbandingan</div>
+        <h1 class="hero-title"><span class="accent">LSTM</span> vs <span style="color:var(--gru)">GRU</span></h1>
+        <p class="hero-desc">Evaluasi mendalam performa dua model deep learning untuk prediksi harga komoditas pangan Aceh.</p>
+      </div>
+    </section>
+
+    <!-- Model Info Cards -->
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:start;margin-bottom:32px">
+      <div class="model-header model-lstm fade-up">
+        <span class="model-icon">🟡</span>
+        <div class="model-title" style="color:var(--lstm)">Long Short-Term Memory</div>
+        <div style="font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">LSTM</div>
+        <div class="model-desc">
+          LSTM menggunakan tiga gerbang (<em>forget, input, output gate</em>) untuk mengontrol aliran informasi.
+          Mampu menangkap dependensi jangka panjang dalam deret waktu, cocok untuk pola harga yang lambat berubah.
+        </div>
+        <div class="model-spec">
+          <div class="model-spec-item"><span>Input Shape</span>(None, 30, 3)</div>
+          <div class="model-spec-item"><span>Output</span>(None, 3)</div>
+          <div class="model-spec-item"><span>Ukuran File</span>~1.5 MB</div>
+          <div class="model-spec-item"><span>Sequence</span>30 hari</div>
+        </div>
+      </div>
+
+      <div class="vs-divider">
+        <div class="vs-badge">VS</div>
+        <div style="width:1px;height:80px;background:var(--border)"></div>
+      </div>
+
+      <div class="model-header model-gru fade-up delay-1">
+        <span class="model-icon">🟣</span>
+        <div class="model-title" style="color:var(--gru)">Gated Recurrent Unit</div>
+        <div style="font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">LSTM-GRU</div>
+        <div class="model-desc">
+          GRU menyederhanakan LSTM menjadi dua gerbang (<em>reset & update gate</em>), lebih efisien secara komputasi.
+          Cenderung lebih cepat konvergen dan unggul pada data dengan volatilitas tinggi seperti cabai.
+        </div>
+        <div class="model-spec">
+          <div class="model-spec-item"><span>Input Shape</span>(None, 30, 3)</div>
+          <div class="model-spec-item"><span>Output</span>(None, 3)</div>
+          <div class="model-spec-item"><span>Ukuran File</span>~1.6 MB</div>
+          <div class="model-spec-item"><span>Sequence</span>30 hari</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics Comparison -->
+    <div class="section-head"><h2>📐 Perbandingan Metrik Evaluasi</h2></div>
+
+    <div data-tab-group="metrics">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="mape">MAPE (%)</button>
+        <button class="tab-btn" data-tab="rmse">RMSE</button>
+        <button class="tab-btn" data-tab="mae">MAE</button>
+      </div>
+
+      <!-- MAPE -->
+      <div class="tab-pane active" data-tab="mape">
+        <div class="grid-3" style="margin-bottom:20px">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px">🌾 Beras Medium</div>
+            <div class="bar-compare">
+              <div class="bar-label" style="color:var(--lstm)">LSTM</div>
+              <div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--lstm)"></div></div>
+              <div class="bar-val" style="color:var(--lstm)"><strong>4.51%</strong> <span class="badge badge-gold" style="font-size:9px">WIN</span></div>
+            </div>
+            <div class="bar-compare">
+              <div class="bar-label" style="color:var(--gru)">GRU</div>
+              <div class="bar-track"><div class="bar-fill" style="width:51%;background:var(--gru)"></div></div>
+              <div class="bar-val" style="color:var(--gru)"><strong>5.06%</strong></div>
+            </div>
+            <div class="winner-row"><div class="winner-icon">🏆</div><div class="winner-text">LSTM lebih unggul sebesar <strong>+0.55% MAPE</strong></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px">🧅 Bawang Merah</div>
+            <div class="bar-compare">
+              <div class="bar-label" style="color:var(--lstm)">LSTM</div>
+              <div class="bar-track"><div class="bar-fill" style="width:47%;background:var(--lstm)"></div></div>
+              <div class="bar-val" style="color:var(--lstm)"><strong>17.58%</strong> <span class="badge badge-gold" style="font-size:9px">WIN</span></div>
+            </div>
+            <div class="bar-compare">
+              <div class="bar-label" style="color:var(--gru)">GRU</div>
+              <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--gru)"></div></div>
+              <div class="bar-val" style="color:var(--gru)"><strong>18.63%</strong></div>
+            </div>
+            <div class="winner-row"><div class="winner-icon">🏆</div><div class="winner-text">LSTM lebih unggul sebesar <strong>+1.05% MAPE</strong></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px">🌶️ Cabai Merah Keriting</div>
+            <div class="bar-compare">
+              <div class="bar-label" style="color:var(--lstm)">LSTM</div>
+              <div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--lstm)"></div></div>
+              <div class="bar-val" style="color:var(--lstm)"><strong>21.05%</strong></div>
+            </div>
+            <div class="bar-compare">
+              <div class="bar-label" style="color:var(--gru)">GRU</div>
+              <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--gru)"></div></div>
+              <div class="bar-val" style="color:var(--gru)"><strong>18.25%</strong> <span class="badge badge-violet" style="font-size:9px">WIN</span></div>
+            </div>
+            <div class="winner-row" style="background:rgba(155,114,240,0.06);border-color:rgba(155,114,240,0.15)">
+              <div class="winner-icon">🏆</div>
+              <div class="winner-text">GRU lebih unggul sebesar <strong style="color:var(--gru)">+2.80% MAPE</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <canvas id="mapeBarchart" style="max-height:250px"></canvas>
+        </div>
+      </div>
+
+      <!-- RMSE -->
+      <div class="tab-pane" data-tab="rmse">
+        <div class="card">
+          <canvas id="rmseBarchart" style="max-height:280px"></canvas>
+        </div>
+        <div class="grid-3" style="margin-top:16px">
+          <div class="card card-sm">
+            <div class="card-sub" style="margin-bottom:4px">🌾 Beras Medium</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="color:var(--lstm)">LSTM: <strong>679.46</strong> ✓</div>
+              <div style="color:var(--gru)">GRU: 799.89</div>
+            </div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-sub" style="margin-bottom:4px">🧅 Bawang Merah</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="color:var(--lstm)">LSTM: <strong>8,603.95</strong> ✓</div>
+              <div style="color:var(--gru)">GRU: 9,246.11</div>
+            </div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-sub" style="margin-bottom:4px">🌶️ Cabai Merah</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="color:var(--lstm)">LSTM: 9,092.09</div>
+              <div style="color:var(--gru)">GRU: <strong>7,713.23</strong> ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAE -->
+      <div class="tab-pane" data-tab="mae">
+        <div class="card">
+          <canvas id="maeBarchart" style="max-height:280px"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual Comparison: Predicted vs Actual -->
+    <div class="section-head" style="margin-top:36px"><h2>📊 Overlay Prediksi vs Aktual</h2></div>
+    <div data-tab-group="overlay">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="ob">🌾 Beras</button>
+        <button class="tab-btn" data-tab="ow">🧅 Bawang</button>
+        <button class="tab-btn" data-tab="oc">🌶️ Cabai</button>
+      </div>
+      <div class="tab-pane active" data-tab="ob">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Beras Medium — Aktual vs LSTM vs GRU</div><div class="card-sub">Data uji Mar–Des 2024 · 293 titik data</div></div>
+            <div class="legend">
+              <div class="legend-item"><div class="leg-line" style="background:var(--actual)"></div>Aktual</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--lstm)"></div>LSTM</div>
+              <div class="legend-item"><div class="leg-dash" style="color:var(--gru)"></div>GRU</div>
+            </div>
+          </div>
+          <canvas id="chOvBeras"></canvas>
+        </div>
+      </div>
+      <div class="tab-pane" data-tab="ow">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Bawang Merah — Aktual vs LSTM vs GRU</div><div class="card-sub">Data uji Mar–Des 2024</div></div>
+            <div class="legend">
+              <div class="legend-item"><div class="leg-line" style="background:var(--actual)"></div>Aktual</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--lstm)"></div>LSTM</div>
+              <div class="legend-item"><div class="leg-dash" style="color:var(--gru)"></div>GRU</div>
+            </div>
+          </div>
+          <canvas id="chOvBawang"></canvas>
+        </div>
+      </div>
+      <div class="tab-pane" data-tab="oc">
+        <div class="card">
+          <div class="card-header"><div><div class="card-title">Cabai Merah Keriting — Aktual vs LSTM vs GRU</div><div class="card-sub">Data uji Mar–Des 2024</div></div>
+            <div class="legend">
+              <div class="legend-item"><div class="leg-line" style="background:var(--actual)"></div>Aktual</div>
+              <div class="legend-item"><div class="leg-line" style="background:var(--lstm)"></div>LSTM</div>
+              <div class="legend-item"><div class="leg-dash" style="color:var(--gru)"></div>GRU</div>
+            </div>
+          </div>
+          <canvas id="chOvCabai"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="section-head" style="margin-top:36px"><h2>🏁 Kesimpulan Perbandingan</h2></div>
+    <div class="card" style="margin-bottom:24px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+        <div style="text-align:center;padding:16px">
+          <div style="font-size:36px;margin-bottom:8px">🌾🧅</div>
+          <div class="badge badge-gold" style="margin-bottom:8px;font-size:13px;padding:6px 16px">LSTM Unggul</div>
+          <div style="font-size:12px;color:var(--t2)">Beras Medium & Bawang Merah<br>Pola lebih stabil & periodik</div>
+        </div>
+        <div style="text-align:center;padding:16px;border-left:1px solid var(--border);border-right:1px solid var(--border)">
+          <div style="font-size:36px;margin-bottom:8px">🌶️</div>
+          <div class="badge badge-violet" style="margin-bottom:8px;font-size:13px;padding:6px 16px">GRU Unggul</div>
+          <div style="font-size:12px;color:var(--t2)">Cabai Merah Keriting<br>Fluktuasi tinggi & musiman</div>
+        </div>
+        <div style="text-align:center;padding:16px">
+          <div style="font-size:36px;margin-bottom:8px">📊</div>
+          <div class="badge badge-sky" style="margin-bottom:8px;font-size:13px;padding:6px 16px">Overall LSTM</div>
+          <div style="font-size:12px;color:var(--t2)">2 dari 3 komoditas<br>LSTM lebih akurat (MAPE)</div>
+        </div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--r);padding:16px;margin-top:16px;font-size:13px;line-height:1.8;color:var(--t2)">
+        <strong style="color:var(--t1)">Rekomendasi:</strong> Model LSTM direkomendasikan sebagai model utama untuk prediksi harga komoditas pangan di Aceh, khususnya Beras Medium dan Bawang Merah.
+        Untuk Cabai Merah Keriting yang memiliki volatilitas sangat tinggi, model GRU lebih disarankan karena MAPE lebih rendah (18.25% vs 21.05%).
+        Penggunaan <em>ensemble</em> kedua model dapat dipertimbangkan untuk meningkatkan akurasi prediksi.
+      </div>
+    </div>
+
+  </div>
+  <footer class="footer">
+    <div class="footer-text"><strong>AcehPangan</strong> · Analisis Perbandingan LSTM vs GRU</div>
+  </footer>
+</main>
+
+<script src="../js/app.js"></script>
+<script>
+async function init() {
+  const D = await loadData();
+
+  // ── Bar charts ──
+  const comms = ['Beras Medium','Bawang Merah','Cabai Merah Keriting'];
+  const labels = ['🌾 Beras', '🧅 Bawang', '🌶️ Cabai'];
+
+  // MAPE bar
+  new Chart(document.getElementById('mapeBarchart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'LSTM', data: comms.map(c => D.metrics[c].lstm.mape), backgroundColor: 'rgba(232,168,32,0.7)', borderRadius: 5 },
+        { label: 'GRU',  data: comms.map(c => D.metrics[c].gru.mape),  backgroundColor: 'rgba(155,114,240,0.7)', borderRadius: 5 }
+      ]
+    },
+    options: { ...makeChartOpts('MAPE (%)'),
+      scales: { y: { ticks: { callback: v => v + '%' }, title: { display: true, text: 'MAPE (%)', color:'#4a607f' } } }
+    }
+  });
+
+  // RMSE bar
+  new Chart(document.getElementById('rmseBarchart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'LSTM', data: comms.map(c => D.metrics[c].lstm.rmse), backgroundColor: 'rgba(232,168,32,0.7)', borderRadius: 5 },
+        { label: 'GRU',  data: comms.map(c => D.metrics[c].gru.rmse),  backgroundColor: 'rgba(155,114,240,0.7)', borderRadius: 5 }
+      ]
+    },
+    options: makeChartOpts('RMSE (Rp)')
+  });
+
+  // MAE bar
+  new Chart(document.getElementById('maeBarchart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'LSTM', data: comms.map(c => D.metrics[c].lstm.mae), backgroundColor: 'rgba(232,168,32,0.7)', borderRadius: 5 },
+        { label: 'GRU',  data: comms.map(c => D.metrics[c].gru.mae),  backgroundColor: 'rgba(155,114,240,0.7)', borderRadius: 5 }
+      ]
+    },
+    options: makeChartOpts('MAE (Rp)')
+  });
+
+  // Overlay charts
+  if (D) {
+    ['Beras Medium','Bawang Merah','Cabai Merah Keriting'].forEach((c, i) => {
+      const ids = ['chOvBeras','chOvBawang','chOvCabai'];
+      buildLineChart(ids[i], D.test_dates,
+        [DS.actual(D.actual_test[c]), DS.lstm(D.lstm_pred[c]), DS.gru(D.gru_pred[c])]);
+    });
+  }
+}
+
+initTabs();
+init();
+</script>
+</body>
+</html>
